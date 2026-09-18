@@ -185,23 +185,19 @@
 
   .notes { display: none; }
 
-  .nav {
-    position: fixed;
-    right: 18px;
-    bottom: 18px;
+  .deck-hint {
     font-family: var(--mono);
     font-size: 13px;
     letter-spacing: .08em;
     color: var(--ink-45);
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    padding: 9px 13px;
+    text-align: center;
+    padding: 4px 0 8px;
   }
 
   @media print {
     html, body { background: #fff; }
     .deck { gap: 0; padding: 0; }
-    .nav { display: none; }
+    .deck-hint { display: none; }
     .slide { box-shadow: none; page-break-after: always; break-after: page; }
     @page { size: 1280px 720px; margin: 0; }
   }
@@ -370,7 +366,7 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
   </section>
 
 </div>
-<div class="nav">ARROW KEYS TO NAVIGATE &middot; PRINT TO PDF</div>
+<p class="deck-hint">ARROW KEYS TO NAVIGATE &middot; PRINT TO PDF</p>
 <script>
   // Arrow-key navigation scrolls slide by slide, which is enough for a deck that
   // is also meant to be read as a scroll and exported to PDF.
