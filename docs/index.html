@@ -160,6 +160,12 @@
   pre .g { color: #7ED9A8; }
   pre .a { color: #E8B579; }
 
+  .foot a {
+    color: var(--sign);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
   .pill {
     font-family: var(--mono);
     font-size: 14px;
@@ -288,7 +294,7 @@
       <h2>Every API is sold to a human,<br>so agents cannot buy any of them.</h2>
       <p class="lede">An agent that needs a price feed, a risk check or an RPC call hits a signup form, a key rotation policy and a monthly invoice.</p>
     </div>
-    <div class="foot"><span>Tollway</span><span>1 / 11</span></div>
+    <div class="foot"><span>Tollway</span><span>1 / 13</span></div>
   </section>
 
   <section class="slide">
@@ -307,7 +313,7 @@
         </tbody>
       </table>
     </div>
-    <div class="foot"><span>Tollway</span><span>2 / 11</span></div>
+    <div class="foot"><span>Tollway</span><span>2 / 13</span></div>
   </section>
 
   <section class="slide">
@@ -316,7 +322,7 @@
       <h2>A reference key turns a payment<br>into a receipt the server can verify.</h2>
       <p class="lede">Each invoice carries a fresh public key. The payer includes it in the transaction. The gateway looks the payment up by reference instead of trusting the caller.</p>
     </div>
-    <div class="foot"><span>Tollway</span><span>3 / 11</span></div>
+    <div class="foot"><span>Tollway</span><span>3 / 13</span></div>
   </section>
 
   <section class="slide">
@@ -332,7 +338,7 @@ GET /v1/data/token-risk-scan
 GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span>
 <span class="g">200 OK</span>  { data: {...}, receipt: { signature, payer } }</pre>
     </div>
-    <div class="foot"><span>Tollway</span><span>4 / 11</span></div>
+    <div class="foot"><span>Tollway</span><span>4 / 13</span></div>
   </section>
 
   <section class="slide">
@@ -393,7 +399,7 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         </svg>
       </div>
     </div>
-    <div class="foot"><span>The reference is burned after step 6, so it can never be redeemed twice</span><span>5 / 11</span></div>
+    <div class="foot"><span>The reference is burned after step 6, so it can never be redeemed twice</span><span>5 / 13</span></div>
   </section>
 
   <section class="slide">
@@ -407,7 +413,7 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
       </ul>
       <p class="lede" style="font-size:22px; max-width:56ch;">Paying in the wrong mint is rejected, not credited. Underpaying by one base unit is rejected.</p>
     </div>
-    <div class="foot"><span>Tollway</span><span>6 / 11</span></div>
+    <div class="foot"><span>Tollway</span><span>6 / 13</span></div>
   </section>
 
   <section class="slide">
@@ -432,7 +438,10 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         <div class="d">Including verification against real on-chain data</div>
       </div>
     </div>
-    <div class="foot"><span>Slot 500190640, epoch 1157, 84.87% progress</span><span>7 / 11</span></div>
+    <div class="foot">
+      <span>Verify the payment on chain: <a href="https://explorer.solana.com/tx/669PwMJQXsYmqqE9Zm1jREkXbVD934umrTPM8ctUbVPPLSZUfG7FUz5NMxZfEjXFeyMjXLJVkbSNvxGLSKHV2G9o?cluster=devnet">devnet transaction 669PwMJQ</a></span>
+      <span>7 / 13</span>
+    </div>
   </section>
 
   <section class="slide">
@@ -450,20 +459,51 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         </tbody>
       </table>
     </div>
-    <div class="foot"><span>Exposed over MCP so any agent framework can call it</span><span>8 / 11</span></div>
+    <div class="foot"><span>Exposed over MCP so any agent framework can call it</span><span>8 / 13</span></div>
   </section>
 
   <section class="slide">
-    <div class="eyebrow"><span>Business model</span><span>09</span></div>
+    <div class="eyebrow"><span>Go to market</span><span>09</span></div>
+    <div class="body-block">
+      <h2>Sell where the agents already are.</h2>
+      <ul>
+        <li><span class="mk">01</span><span><b>Prove it on our own feeds.</b> Ten design partners settle real calls before we ask anyone to list theirs.</span></li>
+        <li><span class="mk">02</span><span><b>Open provider self serve.</b> Any endpoint becomes a priced tool in minutes, with no integration work.</span></li>
+        <li><span class="mk">03</span><span><b>Land distribution through MCP.</b> Registries and agent frameworks carry the catalogue to builders we never meet.</span></li>
+      </ul>
+    </div>
+    <div class="foot"><span>First 90 days: ten paying providers, one thousand settled calls</span><span>9 / 13</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span>Business model</span><span>10</span></div>
     <div class="body-block" style="align-self:center;">
       <h2>Revenue scales with calls,<br>not with seats.</h2>
       <p class="lede">Tollway takes a basis-point spread on every settled call. Providers keep their existing infrastructure and get paid by customers they could never onboard by hand.</p>
     </div>
-    <div class="foot"><span>Tollway</span><span>9 / 11</span></div>
+    <div class="foot"><span>Tollway</span><span>10 / 13</span></div>
   </section>
 
   <section class="slide">
-    <div class="eyebrow"><span>Why now</span><span>10</span></div>
+    <div class="eyebrow"><span>Why us</span><span>11</span></div>
+    <div class="grid-2">
+      <div class="body-block">
+        <h2>Built by someone who ships agents,<br>and attacks them.</h2>
+        <p class="lede" style="font-size:23px;">Payment rails for agents fail differently from payment rails for people. The failure modes are prompt injection, runaway loops, and agents that spend when they should not.</p>
+      </div>
+      <div class="body-block">
+        <ul>
+          <li><span class="mk">01</span><span><b>Darshan Ahirrao</b>, AI engineer and founder</span></li>
+          <li><span class="mk">02</span><span><b>Shipped production agent, RAG and automation systems</b> for paying clients</span></li>
+          <li><span class="mk">03</span><span><b>Adversarial background:</b> red teaming is the habit that makes a payment gateway safe to hand to a machine</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><span>darshanahirrao</span><span>11 / 13</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span>Why now</span><span>12</span></div>
     <div class="grid-2">
       <div class="body-block">
         <h2>Agents are already<br>buying things.</h2>
@@ -477,11 +517,11 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         </ul>
       </div>
     </div>
-    <div class="foot"><span>Tollway</span><span>10 / 11</span></div>
+    <div class="foot"><span>Tollway</span><span>12 / 13</span></div>
   </section>
 
   <section class="slide">
-    <div class="eyebrow"><span>Close</span><span>11</span></div>
+    <div class="eyebrow"><span>Close</span><span>13</span></div>
     <div class="body-block" style="align-self:center;">
       <h2>The toll road for the<br>agent economy.</h2>
       <p class="lede">Working code, live verification, and a payment primitive that gets cheaper the more machines use it.</p>
@@ -490,7 +530,7 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         <span class="pill">darshanahirrao</span>
       </div>
     </div>
-    <div class="foot"><span>Tollway</span><span>11 / 11</span></div>
+    <div class="foot"><span>Tollway</span><span>13 / 13</span></div>
   </section>
 
 </div>
