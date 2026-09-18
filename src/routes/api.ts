@@ -9,6 +9,7 @@ import { verifyPayment } from "../payments/verify.js";
 export interface ApiDeps {
   connection: Connection;
   ledger: InvoiceLedger;
+  pool?: import("../lib/rpc.js").RpcPool;
 }
 
 function resourceView(resource: Resource) {
@@ -56,6 +57,21 @@ export function createApiRouter(deps: ApiDeps): Router {
 
   router.get("/healthz", (_req, res) => {
     res.json({ ok: true, network: config.network });
+  });
+
+  /** RPC endpoint health, so an operator can see failover state at a glance. */
+  router.get("/v1/rpc/health", async (_req, res) => {
+    if (!deps.pool) {
+      res.json({ endpoints: [], detail: "Single-endpoint mode" });
+      return;
+    }
+    const endpoints = await deps.pool.probe();
+    res.json({
+      active: deps.pool.activeUrl,
+      endpoints,
+      healthy: endpoints.filter((e) => e.ok).length,
+      total: endpoints.length,
+    });
   });
 
   /** Free discovery surface, so an agent can browse the catalogue before paying. */
@@ -154,7 +170,14 @@ export function createApiRouter(deps: ApiDeps): Router {
       return;
     }
 
-    const verification = await verifyPayment(deps.connection, resource, reference);
+    // Verification is the one call that must not fail on a flaky RPC: the payer
+    // has already spent money. When a pool is configured, retry across
+    // endpoints before telling the caller their payment is unsettled.
+    const verification = deps.pool
+      ? await deps.pool.withFailover((connection) =>
+          verifyPayment(connection, resource, reference),
+        )
+      : await verifyPayment(deps.connection, resource, reference);
     if (!verification.ok) {
       res.status(402).json({
         error: "payment_not_settled",

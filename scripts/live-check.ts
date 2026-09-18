@@ -28,14 +28,17 @@ process.env.TOLLWAY_MERCHANT_WALLET = REAL_RECIPIENT;
 const { config, resourceBySlug } = await import("../src/config.js");
 const { verifyPayment } = await import("../src/payments/verify.js");
 const { handlers } = await import("../src/lib/data.js");
+const { RpcPool } = await import("../src/lib/rpc.js");
 
 const line = (label: string, value: unknown) =>
   console.log(`  ${label.padEnd(26)} ${String(value)}`);
 
-const connection = new Connection(config.rpcUrl, "confirmed");
+const pool = new RpcPool(config.rpcUrls);
+const connection = pool.active;
 
 console.log("\n=== Tollway live check (Solana devnet) ===");
-line("rpc", config.rpcUrl);
+line("rpc endpoints", config.rpcUrls.length);
+line("active rpc", pool.activeUrl);
 line("merchant", config.merchantWallet.toBase58());
 
 console.log("\n1. reference lookup + balance delta on a real transaction");

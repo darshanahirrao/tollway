@@ -54,15 +54,33 @@ Underpaying by a single base unit is rejected as `underpaid`.
 pnpm test
 ```
 
-18 tests across two suites. The verification suite runs against
+23 tests across three suites. The verification suite runs against
 `tests/fixtures/devnet-usdc-transfer.json`, a **real Solana devnet transaction**
 (slot 500188983): an actual 0.001 USDC transfer carrying a Memo instruction, which is exactly
 the shape Tollway invoices produce. Testing against real chain data catches parsing mistakes
 that hand-written fixtures hide.
 
 Covered: exact 6dp and 9dp price conversion without float drift, replay protection, invoice
-expiry, cross-resource reference reuse, wrong mint, underpayment, failed transactions, and
-the full 402 handshake over HTTP.
+expiry, cross-resource reference reuse, wrong mint, underpayment, failed transactions, the
+full 402 handshake over HTTP, and RPC failover.
+
+## RPC failover
+
+A payment gateway cannot afford to lose the chain read at the moment a payer retries. Settlement
+verification is the one call where a flaky provider turns into real money that looks unpaid, so
+it runs through a preference-ordered endpoint pool rather than a single connection.
+
+```
+TOLLWAY_RPC_URLS="https://<key>.rpcfast.com/?<params>,https://api.devnet.solana.com"
+```
+
+The first entry is the primary. If it throws or rate limits, the pool retries the next endpoint
+and promotes it, so the following call starts from a healthy provider instead of paying the
+failure cost again. `GET /v1/rpc/health` reports every endpoint with latency, current slot and
+the last error, and `pnpm tsx scripts/live-check.ts` probes the pool as part of its run.
+
+This is also how Tollway runs on **RPC Fast** infrastructure: put the RPC Fast endpoint first and
+keep a public endpoint behind it as a safety net.
 
 ## Live check
 

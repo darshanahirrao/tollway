@@ -89,6 +89,20 @@ const defaultResources: Resource[] = [
 export const config = {
   network,
   rpcUrl: process.env.TOLLWAY_RPC_URL ?? defaultRpc,
+  /**
+   * Preference-ordered RPC endpoints. The first is the primary; the rest are
+   * standbys used when the primary fails or rate limits. Set this to run on
+   * RPC Fast with a public endpoint behind it:
+   *   TOLLWAY_RPC_URLS="https://<key>.rpcfast.com/?...,https://api.devnet.solana.com"
+   */
+  rpcUrls: (
+    process.env.TOLLWAY_RPC_URLS ??
+    process.env.TOLLWAY_RPC_URL ??
+    defaultRpc
+  )
+    .split(",")
+    .map((u) => u.trim())
+    .filter((u) => u.length > 0),
   port: Number(process.env.PORT ?? 4021),
   merchantWallet: requirePubkey(
     "TOLLWAY_MERCHANT_WALLET",
