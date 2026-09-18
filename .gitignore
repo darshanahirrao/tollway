@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+
+# Local gateway state (issued invoices).
+.tollway/
+.tollway-demo/
+
+# Never commit keypairs. Devnet test keys only, and even those stay local.
+keypairs/
+*.json.key
