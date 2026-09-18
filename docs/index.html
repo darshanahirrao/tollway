@@ -194,6 +194,65 @@
     padding: 4px 0 8px;
   }
 
+  /* Cover: an asphalt band with lane markings closes the composition. The
+     device comes from the subject (a tollway), not from decoration. */
+  .cover-band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 150px;
+    background: var(--ink);
+    display: grid;
+    align-content: center;
+    gap: 24px;
+    padding: 0 84px;
+  }
+  .lane {
+    height: 6px;
+    background-image: repeating-linear-gradient(
+      to right,
+      #F6F7F5 0 54px,
+      transparent 54px 108px
+    );
+    opacity: .9;
+  }
+  .lane.short {
+    height: 3px;
+    opacity: .3;
+    background-image: repeating-linear-gradient(
+      to right,
+      #F6F7F5 0 22px,
+      transparent 22px 56px
+    );
+  }
+
+  .cover-meta {
+    position: absolute;
+    left: 84px;
+    right: 84px;
+    bottom: 168px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-45);
+  }
+
+  .diagram { width: 100%; }
+  .diagram text { font-family: var(--mono); }
+  .diagram .life {
+    stroke: var(--rule);
+    stroke-width: 1;
+    stroke-dasharray: 3 6;
+  }
+  .diagram .box { fill: var(--paper-2); stroke: var(--ink); stroke-width: 1.5; }
+  .diagram .head { fill: var(--ink); }
+  .diagram .arrow { stroke: var(--ink); stroke-width: 1.5; fill: none; }
+  .diagram .arrow-return { stroke: var(--sign); stroke-width: 1.5; fill: none; }
+
   @media print {
     html, body { background: #fff; }
     .deck { gap: 0; padding: 0; }
@@ -206,13 +265,21 @@
 <body>
 <div class="deck" id="deck">
 
-  <section class="slide">
+  <section class="slide" style="padding-bottom:190px;">
     <div class="eyebrow"><span>Tollway</span><span>Crypto World's Fair 2026</span></div>
     <div style="align-self:center; display:flex; flex-direction:column; gap:30px;">
       <h1>Machines can now<br>pay per call.</h1>
       <p class="lede">Pay-per-call APIs for AI agents, settled in USDC on Solana. No accounts, no API keys, no invoices.</p>
     </div>
-    <div class="foot"><span>Darshan Ahirrao</span><span>darshanahirrao/tollway</span></div>
+    <div class="cover-meta">
+      <span>Darshan Ahirrao</span>
+      <span>Live settlement on Solana</span>
+    </div>
+    <div class="cover-band" aria-hidden="true">
+      <div class="lane"></div>
+      <div class="lane short"></div>
+      <div class="lane short"></div>
+    </div>
   </section>
 
   <section class="slide">
@@ -221,7 +288,7 @@
       <h2>Every API is sold to a human,<br>so agents cannot buy any of them.</h2>
       <p class="lede">An agent that needs a price feed, a risk check or an RPC call hits a signup form, a key rotation policy and a monthly invoice.</p>
     </div>
-    <div class="foot"><span>Tollway</span><span>1 / 10</span></div>
+    <div class="foot"><span>Tollway</span><span>1 / 11</span></div>
   </section>
 
   <section class="slide">
@@ -240,7 +307,7 @@
         </tbody>
       </table>
     </div>
-    <div class="foot"><span>Tollway</span><span>2 / 10</span></div>
+    <div class="foot"><span>Tollway</span><span>2 / 11</span></div>
   </section>
 
   <section class="slide">
@@ -249,7 +316,7 @@
       <h2>A reference key turns a payment<br>into a receipt the server can verify.</h2>
       <p class="lede">Each invoice carries a fresh public key. The payer includes it in the transaction. The gateway looks the payment up by reference instead of trusting the caller.</p>
     </div>
-    <div class="foot"><span>Tollway</span><span>3 / 10</span></div>
+    <div class="foot"><span>Tollway</span><span>3 / 11</span></div>
   </section>
 
   <section class="slide">
@@ -265,11 +332,66 @@ GET /v1/data/token-risk-scan
 GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span>
 <span class="g">200 OK</span>  { data: {...}, receipt: { signature, payer } }</pre>
     </div>
-    <div class="foot"><span>Tollway</span><span>4 / 10</span></div>
+    <div class="foot"><span>Tollway</span><span>4 / 11</span></div>
   </section>
 
   <section class="slide">
-    <div class="eyebrow"><span>Verification</span><span>05</span></div>
+    <div class="eyebrow"><span>Protocol</span><span>05</span></div>
+    <div class="body-block">
+      <h2>Six messages, one of them on chain.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1060 396" role="img" aria-label="Settlement sequence between an agent, the Tollway gateway, and Solana">
+          <defs>
+            <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="#111815"></path>
+            </marker>
+            <marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="#1C6B48"></path>
+            </marker>
+          </defs>
+
+          <rect class="head" x="30" y="0" width="180" height="40"></rect>
+          <text x="120" y="25" text-anchor="middle" fill="#F6F7F5" font-size="14" letter-spacing="1">AGENT</text>
+          <rect class="head" x="440" y="0" width="180" height="40"></rect>
+          <text x="530" y="25" text-anchor="middle" fill="#F6F7F5" font-size="14" letter-spacing="1">TOLLWAY</text>
+          <rect class="head" x="850" y="0" width="180" height="40"></rect>
+          <text x="940" y="25" text-anchor="middle" fill="#F6F7F5" font-size="14" letter-spacing="1">SOLANA</text>
+
+          <line class="life" x1="120" y1="40" x2="120" y2="392"></line>
+          <line class="life" x1="530" y1="40" x2="530" y2="392"></line>
+          <line class="life" x1="940" y1="40" x2="940" y2="392"></line>
+
+          <text x="128" y="86" fill="#6C7A73" font-size="12">1</text>
+          <line class="arrow" x1="120" y1="92" x2="522" y2="92" marker-end="url(#ah)"></line>
+          <text x="321" y="84" text-anchor="middle" fill="#3C4A44" font-size="13.5">GET a paid resource, no credentials</text>
+
+          <text x="128" y="132" fill="#6C7A73" font-size="12">2</text>
+          <line class="arrow" x1="530" y1="138" x2="128" y2="138" marker-end="url(#ah)"></line>
+          <text x="329" y="130" text-anchor="middle" fill="#3C4A44" font-size="13.5">402 plus Solana Pay URL and a fresh reference</text>
+
+          <text x="128" y="186" fill="#6C7A73" font-size="12">3</text>
+          <line class="arrow" x1="120" y1="192" x2="932" y2="192" marker-end="url(#ah)"></line>
+          <text x="526" y="184" text-anchor="middle" fill="#3C4A44" font-size="13.5">USDC transfer, reference attached as a read only account</text>
+
+          <text x="721" y="236" fill="#6C7A73" font-size="12">4</text>
+          <line class="arrow" x1="530" y1="242" x2="932" y2="242" marker-end="url(#ah)"></line>
+          <text x="731" y="234" text-anchor="middle" fill="#3C4A44" font-size="13.5">look up by reference</text>
+
+          <text x="721" y="282" fill="#6C7A73" font-size="12">5</text>
+          <line class="arrow-return" x1="940" y1="288" x2="538" y2="288" marker-end="url(#ahg)"></line>
+          <text x="739" y="280" text-anchor="middle" fill="#1C6B48" font-size="13.5">transaction and merchant balance delta</text>
+
+          <text x="128" y="336" fill="#6C7A73" font-size="12">6</text>
+          <line class="arrow" x1="530" y1="342" x2="128" y2="342" marker-end="url(#ah)"></line>
+          <text x="329" y="334" text-anchor="middle" fill="#3C4A44" font-size="13.5">200 OK with the data, and a receipt</text>
+        </svg>
+      </div>
+    </div>
+    <div class="foot"><span>The reference is burned after step 6, so it can never be redeemed twice</span><span>5 / 11</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span>Verification</span><span>06</span></div>
     <div class="body-block">
       <h2>The server checks the chain,<br>not the caller.</h2>
       <ul>
@@ -279,11 +401,11 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
       </ul>
       <p class="lede" style="font-size:22px; max-width:56ch;">Paying in the wrong mint is rejected, not credited. Underpaying by one base unit is rejected.</p>
     </div>
-    <div class="foot"><span>Tollway</span><span>5 / 10</span></div>
+    <div class="foot"><span>Tollway</span><span>6 / 11</span></div>
   </section>
 
   <section class="slide">
-    <div class="eyebrow"><span>Evidence</span><span>06</span></div>
+    <div class="eyebrow"><span>Evidence</span><span>07</span></div>
     <div class="body-block">
       <h2>It runs against the live cluster today.</h2>
     </div>
@@ -304,11 +426,11 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         <div class="d">Including verification against real on-chain data</div>
       </div>
     </div>
-    <div class="foot"><span>Slot 500190640, epoch 1157, 84.87% progress</span><span>6 / 10</span></div>
+    <div class="foot"><span>Slot 500190640, epoch 1157, 84.87% progress</span><span>7 / 11</span></div>
   </section>
 
   <section class="slide">
-    <div class="eyebrow"><span>Product</span><span>07</span></div>
+    <div class="eyebrow"><span>Product</span><span>08</span></div>
     <div class="body-block">
       <h2>Any feed becomes a paid tool<br>an agent can call.</h2>
     </div>
@@ -322,20 +444,20 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         </tbody>
       </table>
     </div>
-    <div class="foot"><span>Exposed over MCP so any agent framework can call it</span><span>7 / 10</span></div>
+    <div class="foot"><span>Exposed over MCP so any agent framework can call it</span><span>8 / 11</span></div>
   </section>
 
   <section class="slide">
-    <div class="eyebrow"><span>Business model</span><span>08</span></div>
+    <div class="eyebrow"><span>Business model</span><span>09</span></div>
     <div class="body-block" style="align-self:center;">
       <h2>Revenue scales with calls,<br>not with seats.</h2>
       <p class="lede">Tollway takes a basis-point spread on every settled call. Providers keep their existing infrastructure and get paid by customers they could never onboard by hand.</p>
     </div>
-    <div class="foot"><span>Tollway</span><span>8 / 10</span></div>
+    <div class="foot"><span>Tollway</span><span>9 / 11</span></div>
   </section>
 
   <section class="slide">
-    <div class="eyebrow"><span>Why now</span><span>09</span></div>
+    <div class="eyebrow"><span>Why now</span><span>10</span></div>
     <div class="grid-2">
       <div class="body-block">
         <h2>Agents are already<br>buying things.</h2>
@@ -349,11 +471,11 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         </ul>
       </div>
     </div>
-    <div class="foot"><span>Tollway</span><span>9 / 10</span></div>
+    <div class="foot"><span>Tollway</span><span>10 / 11</span></div>
   </section>
 
   <section class="slide">
-    <div class="eyebrow"><span>Close</span><span>10</span></div>
+    <div class="eyebrow"><span>Close</span><span>11</span></div>
     <div class="body-block" style="align-self:center;">
       <h2>The toll road for the<br>agent economy.</h2>
       <p class="lede">Working code, live verification, and a payment primitive that gets cheaper the more machines use it.</p>
@@ -362,7 +484,7 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         <span class="pill">darshanahirrao</span>
       </div>
     </div>
-    <div class="foot"><span>Tollway</span><span>10 / 10</span></div>
+    <div class="foot"><span>Tollway</span><span>11 / 11</span></div>
   </section>
 
 </div>
