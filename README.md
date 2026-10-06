@@ -140,9 +140,42 @@ cost money, and the agent can pay it.
 | `solana-validator-health` | 0.01 USDC | Slot, epoch progress, observed TPS, supply, health flag |
 | `token-risk-scan` | 0.05 USDC | Mint/freeze authority, supply, risk flags, top holders |
 | `wallet-activity-digest` | 0.02 USDC | Balance, sampled tx count, failure rate, last activity |
+| `panta-markets` | 0.02 USDC | Panta prediction-market catalogue, filterable by category and phase |
+| `panta-market` | 0.01 USDC | One market with live yes/no spot prices |
+| `panta-positions` | 0.03 USDC | Wallet holdings with claim eligibility per side |
+| `panta-buy-quote` | 0.05 USDC | Priced YES/NO fill plus a quote session |
+| `panta-buy-build` | 0.10 USDC | Unsigned buy instructions for the agent's wallet to sign |
+| `panta-claim-build` | 0.10 USDC | Unsigned claim instructions for winning shares |
+| `panta-creator-fee-build` | 0.10 USDC | Unsigned creator-fee claim instructions |
+| `panta-trade-report` | 0.05 USDC | On-chain verification plus partner attribution for a signature |
+| `panta-market-create-quote` | 0.10 USDC | Market creation fee quote and reserved create session |
 
 Prices live in `src/config.ts`. `TOLLWAY_CURRENCY` reprices the whole catalogue into one
 currency, which is how devnet demos run on SOL.
+
+## Panta provider
+
+The nine `panta-*` resources wrap the [Panta](https://docs.panta.market) prediction-market API,
+binary YES/NO markets on Solana. Panta never holds keys: every write is quote, build, sign in
+the caller's wallet, broadcast, then confirm. The provider in `src/providers/panta.ts` covers
+that whole surface, and the gateway sells it one call at a time.
+
+This is the shape the catalogue was built for. An agent that wants to trade a prediction market
+needs six or seven API calls to do it safely, each dependent on the last, and most of them are
+build calls the agent cannot reproduce by hand. Charging per call means the agent pays for the
+sequence without ever holding an API key for Panta itself.
+
+Set `PANTA_API_KEY` to a `pk_test_...` or `pk_live_...` key. The resources return `503` with a
+clear message when it is unset, so an unconfigured gateway fails closed rather than half-working.
+
+```
+PANTA_API_KEY=pk_test_...
+pnpm tsx scripts/panta-live-check.ts
+```
+
+`scripts/panta-live-check.ts` runs the real handlers against the real Panta API and prints one
+line per path. The build paths are exercised too, so a broken request shape shows up as a
+failure rather than a silent empty response.
 
 ## Configuration
 
@@ -155,6 +188,8 @@ currency, which is how devnet demos run on SOL.
 | `TOLLWAY_CURRENCY` | per-resource | Force the catalogue to `usdc` or `sol` |
 | `TOLLWAY_INVOICE_TTL` | `900` | Seconds an invoice stays payable |
 | `TOLLWAY_PUBLIC_URL` | `http://localhost:4021` | Base URL used in pay URLs |
+| `PANTA_API_KEY` | unset | Enables the nine `panta-*` resources (`pk_test_...` or `pk_live_...`) |
+| `PANTA_BASE_URL` | `https://live-api.panta.market/api/v1` | Override for the Panta provider |
 
 ## Revenue model
 

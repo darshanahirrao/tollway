@@ -164,7 +164,17 @@ describe("402 flow", () => {
       const res = await fetch(`${base}/v1/catalog`);
       expect(res.status).toBe(200);
       const body = (await res.json()) as any;
-      expect(body.resources).toHaveLength(3);
+      // The catalogue grows with each provider; assert the core Solana
+      // resources are present rather than pinning an exact count.
+      const slugs = body.resources.map((r: { slug: string }) => r.slug);
+      expect(slugs).toEqual(
+        expect.arrayContaining([
+          "solana-validator-health",
+          "token-risk-scan",
+          "wallet-activity-digest",
+        ]),
+      );
+      expect(body.resources.length).toBeGreaterThanOrEqual(3);
     });
   });
 

@@ -57,6 +57,60 @@ function schemaFor(slug: string): Record<string, z.ZodTypeAny> {
         wallet: z.string().describe("Wallet address to summarise"),
         limit: z.string().optional().describe("How many recent transactions to sample"),
       };
+    case "panta-markets":
+      return {
+        category: z.string().optional().describe("Category slug, e.g. crypto"),
+        status: z.string().optional().describe("primary | secondary | resolved | cancelled"),
+        createdBy: z.string().optional().describe("Pass 'me' for markets this account created"),
+        cursor: z.string().optional().describe("Pagination cursor from a previous page"),
+        limit: z.string().optional().describe("Page size, max 50"),
+      };
+    case "panta-market":
+      return { marketId: z.string().describe("Panta market (event) address") };
+    case "panta-positions":
+      return { wallet: z.string().describe("Wallet whose positions to read") };
+    case "panta-buy-quote":
+      return {
+        wallet: z.string().describe("Buyer wallet"),
+        marketId: z.string().describe("Panta market address"),
+        side: z.string().describe("yes or no"),
+        amountUsdc: z.string().describe("Deposit in USDC, e.g. 20.00"),
+      };
+    case "panta-buy-build":
+      return {
+        quoteId: z.string().describe("quoteId from panta-buy-quote"),
+        wallet: z.string().describe("Must match the quote wallet"),
+        maxSlippageBps: z.string().optional().describe("Default 100, max 5000"),
+      };
+    case "panta-claim-build":
+      return {
+        wallet: z.string().describe("Claimant wallet"),
+        marketId: z.string().describe("Resolved market address"),
+      };
+    case "panta-creator-fee-build":
+      return {
+        wallet: z.string().describe("Market creator wallet"),
+        marketId: z.string().describe("Graduated market address"),
+      };
+    case "panta-trade-report":
+      return {
+        signature: z.string().describe("Broadcast transaction signature"),
+        wallet: z.string().describe("Trader wallet"),
+        marketId: z.string().describe("Panta market address"),
+        quoteId: z.string().optional().describe("Quote id when available"),
+      };
+    case "panta-market-create-quote":
+      return {
+        wallet: z.string().describe("Fee payer and signer"),
+        question: z.string().describe("Market question, max 512 chars"),
+        resolutionRule: z.string().describe("Resolution criteria, max 2048 chars"),
+        sources: z.string().describe("Comma-separated source-of-truth URLs"),
+        category: z.string().describe("Category slug"),
+        startTime: z.string().describe("Unix seconds, at least 3600s ahead"),
+        endTime: z.string().describe("Unix seconds"),
+        resolutionTime: z.string().describe("Unix seconds"),
+        imageUrl: z.string().describe("Public catalog image URL"),
+      };
     default:
       return {};
   }

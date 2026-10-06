@@ -84,6 +84,89 @@ const defaultResources: Resource[] = [
     currency: "usdc",
     unit: "call",
   },
+  // Panta prediction-market surface. Read routes are cheap; the build routes
+  // are the ones an agent cannot easily reproduce by hand, so they cost more.
+  {
+    slug: "panta-markets",
+    name: "Panta Markets",
+    description:
+      "Paginated USDC prediction-market catalog from Panta, filterable by category, phase, and creator.",
+    price: 0.02,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "panta-market",
+    name: "Panta Market Detail",
+    description:
+      "One Panta market with live yes/no spot prices, phase, and resolution timing.",
+    price: 0.01,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "panta-positions",
+    name: "Panta Wallet Positions",
+    description:
+      "USDC market holdings for a wallet, with claim eligibility per side.",
+    price: 0.03,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "panta-buy-quote",
+    name: "Panta Primary Buy Quote",
+    description:
+      "Simulate a YES or NO fill on Panta's bonding curve and open a quote session.",
+    price: 0.05,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "panta-buy-build",
+    name: "Panta Primary Buy Build",
+    description:
+      "Unsigned Solana instructions for a quoted YES or NO buy, ready for the agent's wallet to sign.",
+    price: 0.1,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "panta-claim-build",
+    name: "Panta Win Claim Build",
+    description:
+      "Unsigned claim instructions for a resolved Panta market where the wallet holds winning shares.",
+    price: 0.1,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "panta-creator-fee-build",
+    name: "Panta Creator Fee Build",
+    description:
+      "Unsigned claim instructions for accrued creator fees on a graduated Panta market.",
+    price: 0.1,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "panta-trade-report",
+    name: "Panta Trade Attribution",
+    description:
+      "Verify an on-chain Panta buy or win claim and store partner attribution for the signature.",
+    price: 0.05,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "panta-market-create-quote",
+    name: "Panta Market Creation Quote",
+    description:
+      "Validate market parameters and return the USDC creation fee plus the reserved create session.",
+    price: 0.1,
+    currency: "usdc",
+    unit: "call",
+  },
 ];
 
 export const config = {

@@ -1,4 +1,10 @@
 import { Connection, PublicKey } from "@solana/web3.js";
+import {
+  PantaError,
+  pantaFromEnv,
+  type PantaClient,
+  type PantaSide,
+} from "../providers/panta.js";
 
 export interface HandlerContext {
   connection: Connection;
@@ -31,6 +37,144 @@ function parsePubkey(value: string, name: string): PublicKey {
     throw new HandlerError(`${name} is not a valid base58 address: ${value}`);
   }
 }
+
+function optionalParam(
+  params: Record<string, string>,
+  name: string,
+): string | undefined {
+  const value = params[name];
+  return value && value.length > 0 ? value : undefined;
+}
+
+/**
+ * Panta handlers share three concerns: the gateway must be configured, the
+ * upstream error code has to survive as an HTTP status an agent can act on, and
+ * nothing should be silently swallowed. This keeps all three in one place.
+ */
+async function withPanta<T>(fn: (client: PantaClient) => Promise<T>): Promise<T> {
+  const client = pantaFromEnv();
+  if (!client) {
+    throw new HandlerError(
+      "Panta is not configured on this gateway. Set PANTA_API_KEY to enable the Panta resources.",
+      503,
+    );
+  }
+  try {
+    return await fn(client);
+  } catch (error) {
+    if (error instanceof PantaError) {
+      const status = error.status >= 400 && error.status < 600 ? error.status : 502;
+      throw new HandlerError(`${error.code}: ${error.message}`, status);
+    }
+    throw error;
+  }
+}
+
+/** Panta's public USDC market catalog. */
+const pantaMarkets: Handler = async ({ params }) =>
+  withPanta((client) =>
+    client.listMarkets({
+      category: optionalParam(params, "category"),
+      status: optionalParam(params, "status"),
+      createdBy: optionalParam(params, "createdBy"),
+      cursor: optionalParam(params, "cursor"),
+      limit: params.limit ? Number(params.limit) : undefined,
+    }),
+  );
+
+/** One market with live spot prices, for mark-to-market and price checks. */
+const pantaMarket: Handler = async ({ params }) =>
+  withPanta((client) =>
+    client.getMarket(requireParam(params, "marketId")),
+  );
+
+/** Holdings plus claim eligibility, the read an agent makes before it claims. */
+const pantaPositions: Handler = async ({ params }) =>
+  withPanta((client) => client.positions(requireParam(params, "wallet")));
+
+/** Step one of a buy: price the fill and open a short-lived quote session. */
+const pantaBuyQuote: Handler = async ({ params }) =>
+  withPanta((client) =>
+    client.quoteBuy({
+      wallet: requireParam(params, "wallet"),
+      marketId: requireParam(params, "marketId"),
+      side: requireParam(params, "side").toLowerCase() as PantaSide,
+      amountUsdc: requireParam(params, "amountUsdc"),
+      userId: optionalParam(params, "userId"),
+    }),
+  );
+
+/** Step two of a buy: unsigned instructions the caller's wallet signs. */
+const pantaBuyBuild: Handler = async ({ params }) =>
+  withPanta((client) =>
+    client.buildBuy({
+      quoteId: requireParam(params, "quoteId"),
+      wallet: requireParam(params, "wallet"),
+      userId: optionalParam(params, "userId"),
+      maxSlippageBps: params.maxSlippageBps
+        ? Number(params.maxSlippageBps)
+        : undefined,
+    }),
+  );
+
+/** Claim instructions for winning shares in a resolved market. */
+const pantaClaimBuild: Handler = async ({ params }) =>
+  withPanta((client) =>
+    client.buildWinClaim({
+      wallet: requireParam(params, "wallet"),
+      marketId: requireParam(params, "marketId"),
+    }),
+  );
+
+/** Creator-fee claim instructions for a graduated market. */
+const pantaCreatorFeeBuild: Handler = async ({ params }) =>
+  withPanta((client) =>
+    client.buildCreatorFeeClaim({
+      wallet: requireParam(params, "wallet"),
+      marketId: requireParam(params, "marketId"),
+    }),
+  );
+
+/** Verify a broadcast transaction on chain and store partner attribution. */
+const pantaTradeReport: Handler = async ({ params }) =>
+  withPanta((client) =>
+    client.reportTrade({
+      signature: requireParam(params, "signature"),
+      wallet: requireParam(params, "wallet"),
+      marketId: requireParam(params, "marketId"),
+      quoteId: optionalParam(params, "quoteId"),
+      clientOrderId: optionalParam(params, "clientOrderId"),
+      userId: optionalParam(params, "userId"),
+    }),
+  );
+
+/**
+ * Market creation fee quote. `sources` is a comma-separated list because the
+ * gateway surface is GET with query parameters.
+ */
+const pantaMarketCreateQuote: Handler = async ({ params }) =>
+  withPanta((client) =>
+    client.quoteCreateMarket({
+      wallet: requireParam(params, "wallet"),
+      question: requireParam(params, "question"),
+      resolutionRule: requireParam(params, "resolutionRule"),
+      sourcesOfTruth: requireParam(params, "sources")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      category: requireParam(params, "category"),
+      startTime: Number(requireParam(params, "startTime")),
+      endTime: Number(requireParam(params, "endTime")),
+      resolutionTime: Number(requireParam(params, "resolutionTime")),
+      imageUrl: requireParam(params, "imageUrl"),
+      marketType: optionalParam(params, "marketType") as
+        | "standard"
+        | "breaking"
+        | undefined,
+      title: optionalParam(params, "title"),
+      region: optionalParam(params, "region"),
+    }),
+  );
 
 /** Cluster liveness and epoch progress, the numbers an agent checks before it transacts. */
 const solanaValidatorHealth: Handler = async ({ connection }) => {
@@ -164,4 +308,13 @@ export const handlers: Record<string, Handler> = {
   "solana-validator-health": solanaValidatorHealth,
   "token-risk-scan": tokenRiskScan,
   "wallet-activity-digest": walletActivityDigest,
+  "panta-markets": pantaMarkets,
+  "panta-market": pantaMarket,
+  "panta-positions": pantaPositions,
+  "panta-buy-quote": pantaBuyQuote,
+  "panta-buy-build": pantaBuyBuild,
+  "panta-claim-build": pantaClaimBuild,
+  "panta-creator-fee-build": pantaCreatorFeeBuild,
+  "panta-trade-report": pantaTradeReport,
+  "panta-market-create-quote": pantaMarketCreateQuote,
 };
