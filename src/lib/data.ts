@@ -5,6 +5,13 @@ import {
   type PantaClient,
   type PantaSide,
 } from "../providers/panta.js";
+import {
+  MeteoraError,
+  getPreset,
+  listPresets,
+  validateConfig,
+} from "../providers/meteora.js";
+import type { ConfigParameters } from "@meteora-ag/dynamic-bonding-curve-sdk";
 
 export interface HandlerContext {
   connection: Connection;
@@ -81,6 +88,41 @@ const pantaMarkets: Handler = async ({ params }) =>
       limit: params.limit ? Number(params.limit) : undefined,
     }),
   );
+
+/** Pay-to-use preset marketplace: what a launchpad browses before it deploys. */
+const meteoraDbcPresets: Handler = async () => listPresets();
+
+/** A single preset as a ready ConfigParameters object. */
+const meteoraDbcPreset: Handler = async ({ params }) => {
+  const slug = requireParam(params, "slug");
+  try {
+    return getPreset(slug);
+  } catch (error) {
+    if (error instanceof MeteoraError) {
+      throw new HandlerError(`${error.code}: ${error.message}`, 404);
+    }
+    throw error;
+  }
+};
+
+/**
+ * Config doctor. Runs Meteora's own validator over a caller-supplied config so
+ * a launchpad finds out why its config would be rejected before it pays for a
+ * create transaction.
+ */
+const meteoraDbcConfigValidate: Handler = async ({ params }) => {
+  const raw = requireParam(params, "config");
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new HandlerError("config must be a JSON object", 400);
+  }
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    throw new HandlerError("config must be a JSON object", 400);
+  }
+  return validateConfig(parsed as ConfigParameters);
+};
 
 /** One market with live spot prices, for mark-to-market and price checks. */
 const pantaMarket: Handler = async ({ params }) =>
@@ -317,4 +359,7 @@ export const handlers: Record<string, Handler> = {
   "panta-creator-fee-build": pantaCreatorFeeBuild,
   "panta-trade-report": pantaTradeReport,
   "panta-market-create-quote": pantaMarketCreateQuote,
+  "meteora-dbc-presets": meteoraDbcPresets,
+  "meteora-dbc-preset": meteoraDbcPreset,
+  "meteora-dbc-config-validate": meteoraDbcConfigValidate,
 };

@@ -149,6 +149,9 @@ cost money, and the agent can pay it.
 | `panta-creator-fee-build` | 0.10 USDC | Unsigned creator-fee claim instructions |
 | `panta-trade-report` | 0.05 USDC | On-chain verification plus partner attribution for a signature |
 | `panta-market-create-quote` | 0.10 USDC | Market creation fee quote and reserved create session |
+| `meteora-dbc-presets` | 0.02 USDC | Validated DBC launch presets with their curve maths |
+| `meteora-dbc-preset` | 0.05 USDC | One preset as ready-to-use DBC `ConfigParameters` |
+| `meteora-dbc-config-validate` | 0.05 USDC | Runs Meteora's own validator over a supplied config |
 
 Prices live in `src/config.ts`. `TOLLWAY_CURRENCY` reprices the whole catalogue into one
 currency, which is how devnet demos run on SOL.
@@ -176,6 +179,33 @@ pnpm tsx scripts/panta-live-check.ts
 `scripts/panta-live-check.ts` runs the real handlers against the real Panta API and prints one
 line per path. The build paths are exercised too, so a broken request shape shows up as a
 failure rather than a silent empty response.
+
+## Meteora DBC provider
+
+The three `meteora-*` resources are a pay-to-use marketplace for Meteora Dynamic Bonding Curve
+launch configs, plus a config doctor. Meteora's own track asks for exactly this shape, and the
+marketplace framing is not decoration: a launchpad pays per preset it adopts, and per config it
+wants checked, without ever holding the SDK.
+
+Presets are built with the official `buildCurveWithMarketCap` from
+`@meteora-ag/dynamic-bonding-curve-sdk`, so the SDK derives the curve points, sqrt prices and
+migration threshold from the two market caps rather than this repo hand-writing them. Every
+preset is then run through Meteora's own `validateConfigParameters` before it is served, and
+`getPreset` returns both the economics and the exact `ConfigParameters` object to hand back to
+the SDK.
+
+```
+curl "localhost:4021/v1/data/meteora-dbc-presets"
+curl "localhost:4021/v1/data/meteora-dbc-preset?slug=equity-paired-low-float"
+```
+
+The config doctor is the interesting one. Configs arrive over HTTP as JSON, where BN values are
+strings, but Meteora's validator does BN arithmetic on them. `reviveConfig` rebuilds the BN
+fields on exactly the paths a built config puts a BN on, which is what makes a JSON round trip
+validate the same as an in-memory config. Without that, every HTTP-submitted config would be
+rejected as malformed.
+
+No API key is needed: this provider is library and math, not a remote service.
 
 ## Configuration
 

@@ -167,6 +167,35 @@ const defaultResources: Resource[] = [
     currency: "usdc",
     unit: "call",
   },
+  // Meteora DBC surface: a pay-to-use preset marketplace plus a config doctor,
+  // which is the developer tooling the Meteora track asks for.
+  {
+    slug: "meteora-dbc-presets",
+    name: "Meteora DBC Preset Catalogue",
+    description:
+      "Validated Dynamic Bonding Curve launch presets with their curve maths: upside multiple, fees, migration threshold.",
+    price: 0.02,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "meteora-dbc-preset",
+    name: "Meteora DBC Preset Config",
+    description:
+      "One preset as a ready-to-use DBC ConfigParameters object, plus the economics it produces.",
+    price: 0.05,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "meteora-dbc-config-validate",
+    name: "Meteora DBC Config Doctor",
+    description:
+      "Runs Meteora's own create-config validator over a supplied DBC config and returns every error it finds.",
+    price: 0.05,
+    currency: "usdc",
+    unit: "call",
+  },
 ];
 
 export const config = {

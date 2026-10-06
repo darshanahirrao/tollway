@@ -111,6 +111,18 @@ function schemaFor(slug: string): Record<string, z.ZodTypeAny> {
         resolutionTime: z.string().describe("Unix seconds"),
         imageUrl: z.string().describe("Public catalog image URL"),
       };
+    case "meteora-dbc-preset":
+      return {
+        slug: z
+          .string()
+          .describe("Preset slug from meteora-dbc-presets, e.g. equity-paired-low-float"),
+      };
+    case "meteora-dbc-config-validate":
+      return {
+        config: z
+          .string()
+          .describe("A DBC ConfigParameters object as a JSON string"),
+      };
     default:
       return {};
   }
