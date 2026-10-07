@@ -248,6 +248,16 @@ through the fastest region to prove the path carries real account state. Verifie
 of three regions reachable, slot delta 0, and the USDC mint read back with the Token program as
 owner.
 
+### Live demo
+
+`scripts/solami-live-demo.ts` is the recorded demo run: six real stages against mainnet,
+including a cross-check of the chain head against the public `api.mainnet-beta.solana.com`
+endpoint and a second pass 20 seconds later that shows the slot climbing. Nothing in it is a
+fixture; the recording is a direct screen capture of that run.
+
+- Video (131s, 1080p): https://darshanahirrao.github.io/tollway/assets/tollway-solami-live-demo.mp4
+- Source of the run: `scripts/solami-live-demo.ts`
+
 ## Configuration
 
 | Variable | Default | Purpose |
