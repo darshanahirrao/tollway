@@ -12,6 +12,13 @@ import {
   validateConfig,
 } from "../providers/meteora.js";
 import type { ConfigParameters } from "@meteora-ag/dynamic-bonding-curve-sdk";
+import {
+  SOLAMI_REGIONS,
+  SolamiError,
+  solamiFromEnv,
+  type SolamiClient,
+  type SolamiRegion,
+} from "../providers/solami.js";
 
 export interface HandlerContext {
   connection: Connection;
@@ -76,6 +83,91 @@ async function withPanta<T>(fn: (client: PantaClient) => Promise<T>): Promise<T>
     throw error;
   }
 }
+
+/** Solami key handling, with the upstream status preserved for the caller. */
+async function withSolami<T>(fn: (client: SolamiClient) => Promise<T>): Promise<T> {
+  const client = solamiFromEnv();
+  if (!client) {
+    throw new HandlerError(
+      "Solami is not configured on this gateway. Set SOLAMI_API_KEY to enable the Solami resources.",
+      503,
+    );
+  }
+  try {
+    return await fn(client);
+  } catch (error) {
+    if (error instanceof SolamiError) {
+      const status =
+        error.status && error.status >= 400 && error.status < 600
+          ? error.status
+          : 502;
+      throw new HandlerError(`${error.code}: ${error.message}`, status);
+    }
+    throw error;
+  }
+}
+
+function solamiRegion(params: Record<string, string>): SolamiRegion | undefined {
+  const raw = optionalParam(params, "region");
+  if (!raw) return undefined;
+  const match = SOLAMI_REGIONS.find(
+    (r) => r.id.toLowerCase() === raw.toLowerCase(),
+  );
+  if (!match) {
+    throw new HandlerError(
+      `Unknown Solami region: ${raw}. Known regions: ${SOLAMI_REGIONS.map((r) => r.id).join(", ")}`,
+    );
+  }
+  return match.id;
+}
+
+/** Per-region latency and liveness. */
+const solamiRegionLatency: Handler = async ({ params }) =>
+  withSolami(async (client) => {
+    const regions = await client.probe(optionalParam(params, "network") ?? "sol");
+    const healthy = regions.filter((r) => r.ok);
+    return {
+      network: optionalParam(params, "network") ?? "sol",
+      regions,
+      healthy: healthy.length,
+      total: regions.length,
+      fastest: healthy
+        .filter((r) => r.latencyMs !== null)
+        .sort((a, b) => (a.latencyMs as number) - (b.latencyMs as number))[0]
+        ?.region ?? null,
+      observedAt: new Date().toISOString(),
+    };
+  });
+
+/** The multi-region report: who is behind, and by how much. */
+const solamiSlotSkew: Handler = async ({ params }) =>
+  withSolami((client) =>
+    client.slotSkew(optionalParam(params, "network") ?? "sol"),
+  );
+
+/** Account state, read through the fastest region with cross-region failover. */
+const solamiAccountRead: Handler = async ({ params }) =>
+  withSolami(async (client) => {
+    const pubkey = requireParam(params, "pubkey");
+    const result = await client.getAccount(
+      pubkey,
+      solamiRegion(params),
+      optionalParam(params, "network") ?? "sol",
+    );
+    const value = result.result.value;
+    return {
+      pubkey,
+      region: result.region,
+      latencyMs: result.latencyMs,
+      slot: result.result.context.slot,
+      exists: value !== null,
+      lamports: value?.lamports ?? 0,
+      sol: value ? value.lamports / 1e9 : 0,
+      owner: value?.owner ?? null,
+      executable: value?.executable ?? null,
+      dataEncoding: value ? "base64" : null,
+    };
+  });
 
 /** Panta's public USDC market catalog. */
 const pantaMarkets: Handler = async ({ params }) =>
@@ -362,4 +454,7 @@ export const handlers: Record<string, Handler> = {
   "meteora-dbc-presets": meteoraDbcPresets,
   "meteora-dbc-preset": meteoraDbcPreset,
   "meteora-dbc-config-validate": meteoraDbcConfigValidate,
+  "solami-region-latency": solamiRegionLatency,
+  "solami-slot-skew": solamiSlotSkew,
+  "solami-account-read": solamiAccountRead,
 };

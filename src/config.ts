@@ -196,6 +196,35 @@ const defaultResources: Resource[] = [
     currency: "usdc",
     unit: "call",
   },
+  // Solami multi-region RPC surface. These answer questions a single endpoint
+  // cannot: which region is behind, and therefore where to send a transaction.
+  {
+    slug: "solami-region-latency",
+    name: "Solami Region Latency",
+    description:
+      "Latency and liveness for every Solami point of presence, measured against Solana mainnet.",
+    price: 0.02,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "solami-slot-skew",
+    name: "Solami Slot Skew",
+    description:
+      "Cross-region slot height comparison: how far the slowest Solami region has fallen behind the freshest.",
+    price: 0.02,
+    currency: "usdc",
+    unit: "call",
+  },
+  {
+    slug: "solami-account-read",
+    name: "Solami Account Read",
+    description:
+      "Reads an account through the fastest healthy Solami region, failing over across regions on error.",
+    price: 0.03,
+    currency: "usdc",
+    unit: "call",
+  },
 ];
 
 export const config = {

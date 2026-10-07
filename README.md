@@ -152,6 +152,9 @@ cost money, and the agent can pay it.
 | `meteora-dbc-presets` | 0.02 USDC | Validated DBC launch presets with their curve maths |
 | `meteora-dbc-preset` | 0.05 USDC | One preset as ready-to-use DBC `ConfigParameters` |
 | `meteora-dbc-config-validate` | 0.05 USDC | Runs Meteora's own validator over a supplied config |
+| `solami-region-latency` | 0.02 USDC | Latency and liveness for every Solami region |
+| `solami-slot-skew` | 0.02 USDC | Cross-region slot comparison: who has fallen behind |
+| `solami-account-read` | 0.03 USDC | Account state via the fastest region, with failover |
 
 Prices live in `src/config.ts`. `TOLLWAY_CURRENCY` reprices the whole catalogue into one
 currency, which is how devnet demos run on SOL.
@@ -206,6 +209,44 @@ validate the same as an in-memory config. Without that, every HTTP-submitted con
 rejected as malformed.
 
 No API key is needed: this provider is library and math, not a remote service.
+
+## Solami multi-region provider
+
+The three `solami-*` resources sell an answer a single RPC endpoint cannot give you: **which
+region is behind right now**. Solami serves mainnet from several points of presence, so the
+provider asks all of them the same question and reports where they disagree. A trader about to
+send a transaction cares whether one endpoint is three slots stale, and that is exactly the
+number `solami-slot-skew` returns.
+
+The endpoint shape is not documented publicly and had to be reverse engineered from the
+server's own variant errors:
+
+```
+https://rpc.solami.dev/<network>/<region>?api_key=<key>
+```
+
+`<network>` accepts `sol`, `solana` or `Solana` (also `monad`, `eth`), and `<region>` accepts
+`ams`, `nl` or `SGP`. The key must be the `api_key` **query parameter**: the same URL with an
+`X-Api-Key` or `Authorization: Bearer` header returns `401`.
+
+Two things the code has to handle that are easy to miss:
+
+- **Bursts get rate limited.** Asking three regions two questions each trips a `429`. The client
+  retries with exponential backoff and honours `Retry-After`, because the demo has to survive
+  the limiter rather than fall over on it.
+- **One region failing is the answer, not an error.** `probe` captures failures per region, so
+  a partial outage is reported. Reads then fail over across regions in latency order.
+
+```
+SOLAMI_API_KEY=sk_...
+pnpm tsx scripts/solami-live-check.ts
+```
+
+`scripts/solami-live-check.ts` runs the real provider against Solana mainnet: it prints per
+region latency, slot and epoch, the cross-region slot delta, and then reads the USDC mint
+through the fastest region to prove the path carries real account state. Verified live: three
+of three regions reachable, slot delta 0, and the USDC mint read back with the Token program as
+owner.
 
 ## Configuration
 

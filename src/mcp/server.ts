@@ -123,6 +123,23 @@ function schemaFor(slug: string): Record<string, z.ZodTypeAny> {
           .string()
           .describe("A DBC ConfigParameters object as a JSON string"),
       };
+    case "solami-region-latency":
+    case "solami-slot-skew":
+      return {
+        network: z
+          .string()
+          .optional()
+          .describe("Network segment, defaults to sol (Solana mainnet)"),
+      };
+    case "solami-account-read":
+      return {
+        pubkey: z.string().describe("Base58 account address to read"),
+        region: z
+          .string()
+          .optional()
+          .describe("Force a region: ams, nl or SGP. Omit for the fastest healthy one"),
+        network: z.string().optional().describe("Defaults to sol"),
+      };
     default:
       return {};
   }
