@@ -433,7 +433,7 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         <div class="d">Live cluster reading returned through the paid handler</div>
       </div>
       <div class="stat">
-        <div class="n">18</div>
+        <div class="n">61</div>
         <div class="k">Tests passing</div>
         <div class="d">Including verification against real on-chain data</div>
       </div>
@@ -442,6 +442,23 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
       <span>Verify the payment on chain: <a href="https://explorer.solana.com/tx/669PwMJQXsYmqqE9Zm1jREkXbVD934umrTPM8ctUbVPPLSZUfG7FUz5NMxZfEjXFeyMjXLJVkbSNvxGLSKHV2G9o?cluster=devnet">devnet transaction 669PwMJQ</a></span>
       <span>7 / 13</span>
     </div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span>Live demo</span><span>07b</span></div>
+    <div class="body-block">
+      <h2>Solami multi-region RPC,<br>recorded against mainnet.</h2>
+      <p class="lede" style="font-size:22px; max-width:58ch;">Six real stages, no fixtures: per-region latency and slot, cross-region slot delta, a USDC mint read through the fastest healthy region, a cross-check against the public mainnet endpoint, and a second pass 20 seconds later where the slot has moved on.</p>
+    </div>
+    <div style="align-self:start; width:100%;">
+      <video controls preload="metadata" playsinline style="width:100%; max-width:1040px; display:block; border-radius:8px; border:1px solid rgba(255,255,255,.16); background:#000;">
+        <source src="assets/tollway-solami-live-demo.mp4" type="video/mp4">
+        Your browser cannot play this video. Direct link:
+        <a href="assets/tollway-solami-live-demo.mp4">tollway-solami-live-demo.mp4</a>
+      </video>
+      <p class="lede" style="font-size:18px; margin-top:14px;">131 seconds, 1080p. Reproduce it with <code>pnpm tsx scripts/solami-live-demo.ts</code>.</p>
+    </div>
+    <div class="foot"><span>Tollway</span><span>7b / 13</span></div>
   </section>
 
   <section class="slide">
