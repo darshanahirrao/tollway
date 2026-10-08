@@ -54,7 +54,7 @@ Underpaying by a single base unit is rejected as `underpaid`.
 pnpm test
 ```
 
-23 tests across three suites. The verification suite runs against
+61 tests across six suites. The verification suite runs against
 `tests/fixtures/devnet-usdc-transfer.json`, a **real Solana devnet transaction**
 (slot 500188983): an actual 0.001 USDC transfer carrying a Memo instruction, which is exactly
 the shape Tollway invoices produce. Testing against real chain data catches parsing mistakes
@@ -274,10 +274,10 @@ fixture; the recording is a direct screen capture of that run.
 
 ## Revenue model
 
-The gateway takes a basis-point spread on each settled call. Because settlement is per call
-rather than per month, revenue scales with agent activity instead of with seats. A provider
-listing a feed keeps their existing infrastructure and gets paid by machines they could never
-have onboarded manually.
+The proposed revenue model is a basis-point spread on paid calls. The current gateway routes
+payments to one configured merchant; it does not yet split payments between Tollway and
+external providers. Automated provider revenue sharing is on the roadmap, and no commercial
+Tollway revenue has been verified.
 
 ## Roadmap
 
@@ -285,6 +285,7 @@ have onboarded manually.
 - x402-compatible wire format alongside the reference scheme.
 - Streaming payment for long-running inference, billed per token rather than per call.
 - Provider self-serve: list an endpoint, set a price, receive USDC.
+- Automated provider revenue sharing with an explicit per-call gateway fee.
 
 ## Limitations
 
