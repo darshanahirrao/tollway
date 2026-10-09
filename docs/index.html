@@ -275,11 +275,11 @@
     <div class="eyebrow"><span>Tollway</span><span>Crypto World's Fair 2026</span></div>
     <div style="align-self:center; display:flex; flex-direction:column; gap:30px;">
       <h1>Machines can now<br>pay per call.</h1>
-      <p class="lede">Pay-per-call APIs for AI agents, settled in USDC on Solana. No accounts, no API keys, no invoices.</p>
+      <p class="lede">A pay-per-call prototype for AI agents, using USDC on Solana. No buyer account or Tollway API key.</p>
     </div>
     <div class="cover-meta">
       <span>Darshan Ahirrao</span>
-      <span>Live settlement on Solana</span>
+      <span>AI-assisted prototype &middot; recorded evidence</span>
     </div>
     <div class="cover-band" aria-hidden="true">
       <div class="lane"></div>
@@ -291,8 +291,8 @@
   <section class="slide">
     <div class="eyebrow"><span>The problem</span><span>01</span></div>
     <div class="body-block" style="align-self:center;">
-      <h2>Every API is sold to a human,<br>so agents cannot buy any of them.</h2>
-      <p class="lede">An agent that needs a price feed, a risk check or an RPC call hits a signup form, a key rotation policy and a monthly invoice.</p>
+      <h2>Account setup still adds friction<br>to a one-off tool call.</h2>
+      <p class="lede">Many data APIs require a provider account or prepaid balance. Tollway tests another route: one priced request, one verifiable payment.</p>
     </div>
     <div class="foot"><span>Tollway</span><span>1 / 13</span></div>
   </section>
@@ -300,16 +300,16 @@
   <section class="slide">
     <div class="eyebrow"><span>The problem</span><span>02</span></div>
     <div class="body-block">
-      <h2>Existing rails fail at one cent.</h2>
+      <h2>Small calls need clear tradeoffs.</h2>
     </div>
     <div style="align-self:start;">
       <table>
-        <thead><tr><th>Rail</th><th>Why it breaks for an agent</th></tr></thead>
+        <thead><tr><th>Rail</th><th>Tradeoff to evaluate</th></tr></thead>
         <tbody>
-          <tr><td>Card networks</td><td>Fee exceeds the payment, and the rail requires an account holder</td></tr>
-          <tr><td>Prepaid credits</td><td>Needs an account, a dashboard and a top-up step</td></tr>
-          <tr><td>Provider invoicing</td><td>Nobody wants to issue 40,000 invoices for $0.02 each</td></tr>
-          <tr><td>Off-chain ledgers</td><td>Reintroduces an operator the agent must trust</td></tr>
+          <tr><td>Cards and billing</td><td>Account setup, fees and billing cadence</td></tr>
+          <tr><td>Prepaid credits</td><td>Provider accounts, balances and top-ups</td></tr>
+          <tr><td>x402</td><td>Existing verified payment standard; not yet Tollway-compatible</td></tr>
+          <tr><td>Tollway</td><td>Chain indexing, RPC availability and a single-process ledger</td></tr>
         </tbody>
       </table>
     </div>
@@ -484,12 +484,12 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     <div class="body-block">
       <h2>Sell where the agents already are.</h2>
       <ul>
-        <li><span class="mk">01</span><span><b>Prove it on our own feeds.</b> Ten design partners settle real calls before we ask anyone to list theirs.</span></li>
-        <li><span class="mk">02</span><span><b>Open provider self serve.</b> Any endpoint becomes a priced tool in minutes, with no integration work.</span></li>
-        <li><span class="mk">03</span><span><b>Land distribution through MCP.</b> Registries and agent frameworks carry the catalogue to builders we never meet.</span></li>
+        <li><span class="mk">01</span><span><b>Agree one funded pilot.</b> Test the paid-tool workflow with an agent-data provider.</span></li>
+        <li><span class="mk">02</span><span><b>Measure repeat paid use.</b> Check acceptance, RPC failures and costs before expanding.</span></li>
+        <li><span class="mk">03</span><span><b>Build provider self-serve.</b> A roadmap milestone, guided by validated pilot needs.</span></li>
       </ul>
     </div>
-    <div class="foot"><span>First 90 days: ten paying providers, one thousand settled calls</span><span>9 / 13</span></div>
+    <div class="foot"><span>Proposed milestones; no agreed pilot or commercial revenue</span><span>9 / 13</span></div>
   </section>
 
   <section class="slide">
@@ -505,14 +505,14 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     <div class="eyebrow"><span>Why us</span><span>11</span></div>
     <div class="grid-2">
       <div class="body-block">
-        <h2>Built by someone who ships agents,<br>and attacks them.</h2>
-        <p class="lede" style="font-size:23px;">Payment rails for agents fail differently from payment rails for people. The failure modes are prompt injection, runaway loops, and agents that spend when they should not.</p>
+        <h2>Test the payment path,<br>not just the happy path.</h2>
+        <p class="lede" style="font-size:23px;">An agent-facing gateway must reject replay, expired invoices and wrong-token payments. These paths are tested, not assumed.</p>
       </div>
       <div class="body-block">
         <ul>
-          <li><span class="mk">01</span><span><b>Darshan Ahirrao</b>, AI engineer and founder</span></li>
-          <li><span class="mk">02</span><span><b>Shipped production agent, RAG and automation systems</b> for paying clients</span></li>
-          <li><span class="mk">03</span><span><b>Adversarial background:</b> red teaming is the habit that makes a payment gateway safe to hand to a machine</span></li>
+          <li><span class="mk">01</span><span><b>Darshan Ahirrao</b>, India-based solo founder</span></li>
+          <li><span class="mk">02</span><span><b>61 tests across six suites:</b> verification, handshake, failover and providers</span></li>
+          <li><span class="mk">03</span><span><b>AI-assisted implementation:</b> reviewable source and real-chain evidence, not a security audit</span></li>
         </ul>
       </div>
     </div>
@@ -523,14 +523,14 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     <div class="eyebrow"><span>Why now</span><span>12</span></div>
     <div class="grid-2">
       <div class="body-block">
-        <h2>Agents are already<br>buying things.</h2>
-        <p class="lede" style="font-size:23px;">The demand is arriving faster than the payment rails. Sub-cent settlement is the missing primitive.</p>
+        <h2>Make paid tools<br>verifiable.</h2>
+        <p class="lede" style="font-size:23px;">HTTP and MCP expose the same priced resources. Reference-based verification ties a paid call to chain evidence.</p>
       </div>
       <div class="body-block">
         <ul>
-          <li><span class="mk">01</span><span><b>Solana settles in ~400ms</b> for a fraction of a cent</span></li>
-          <li><span class="mk">02</span><span><b>MCP made tool calls</b> a standard surface agents can pay for</span></li>
-          <li><span class="mk">03</span><span><b>Reference anchoring</b> needs no new program and no custody</span></li>
+          <li><span class="mk">01</span><span><b>Solana Pay references</b> connect invoices to verifiable transfers</span></li>
+          <li><span class="mk">02</span><span><b>MCP tools</b> expose the request and redemption handshake</span></li>
+          <li><span class="mk">03</span><span><b>Settlement timing varies</b> with confirmation and RPC indexing</span></li>
         </ul>
       </div>
     </div>
@@ -541,7 +541,7 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     <div class="eyebrow"><span>Close</span><span>13</span></div>
     <div class="body-block" style="align-self:center;">
       <h2>The toll road for the<br>agent economy.</h2>
-      <p class="lede">Working code, live verification, and a payment primitive that gets cheaper the more machines use it.</p>
+      <p class="lede">Runnable code, recorded chain evidence and an explicit path from prototype to a funded pilot.</p>
       <div style="display:flex; gap:12px; margin-top:8px;">
         <span class="pill ok">github.com/darshanahirrao/tollway</span>
         <span class="pill">darshanahirrao</span>

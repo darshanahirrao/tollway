@@ -2,14 +2,15 @@
 
 **Pay-per-call APIs for AI agents, settled in USDC on Solana.**
 
-Agents are starting to buy things: data, inference, RPC access, scraping, verification.
-Today every one of those purchases runs through a human-shaped rail. You sign up for an
-account, generate an API key, put a card on file, and hope the provider bills you at the end
-of the month. An autonomous agent cannot do any of that, and no provider wants to issue
-thousands of tiny invoices.
+Tollway is an AI-assisted, solo-built prototype for selling data and tools to agent
+developers one request at a time. Many APIs require provider accounts, prepaid balances
+or recurring billing; per-request payment standards are another existing option.
 
-Tollway removes the account entirely. An agent calls an endpoint, gets a price, pays it on
-Solana, and receives the data. No signup, no key, no invoice, no human.
+An agent calls a Tollway endpoint, receives an invoice, pays on Solana and redeems the
+reference for data. Buyers do not need a Tollway account or API key. Gateway operators
+still configure a merchant, RPC access and any required upstream provider keys. No
+external users or commercial Tollway revenue have been verified. The public GitHub Pages
+site hosts the deck and recorded demos, not a hosted payment gateway.
 
 ```
 agent  -> GET /v1/data/token-risk-scan
@@ -19,18 +20,18 @@ agent  -> GET /v1/data/token-risk-scan  (X-Payment-Reference: ...)
         <- 200 OK  { data: {...}, receipt: { signature, payer, ... } }
 ```
 
-## Why this needs a blockchain
+## Why this uses Solana
 
-The hard part of machine-to-machine payments is not moving money, it is **settling a sub-cent
-payment between parties who have no relationship**. Cards cannot do it, because the fee
-exceeds the payment and the rail requires an account. Prepaid credits need an account too.
-Off-chain ledgers reintroduce a trusted operator.
+The prototype uses Solana Pay to associate a request with a directly verifiable payment.
+Each invoice carries a **reference key** that the payer includes in the transaction. The
+gateway looks up candidate transactions by that reference, checks the merchant's balance
+delta and rejects repeated redemption. Confirmation, RPC indexing and request latency
+vary; a roughly 400 ms settlement guarantee has not been established.
 
-Solana settles a one-cent payment in about 400ms for a fraction of a cent, and it supports a
-pattern that makes server-side verification clean: an invoice can carry a **reference key**
-that the payer includes in the transaction. The gateway looks the payment up *by reference*
-rather than trusting a client-supplied signature, so a caller cannot claim someone else's
-transfer.
+[x402](https://docs.cdp.coinbase.com/x402/how-it-works) is an existing per-request payment
+standard with server/facilitator verification. Tollway does not claim that x402 relies on
+unverified client proof. Its current Solana Pay reference flow is not x402 wire-compatible;
+compatibility is roadmap work, not an implemented integration.
 
 ## How verification works
 
@@ -56,9 +57,9 @@ pnpm test
 
 61 tests across six suites. The verification suite runs against
 `tests/fixtures/devnet-usdc-transfer.json`, a **real Solana devnet transaction**
-(slot 500188983): an actual 0.001 USDC transfer carrying a Memo instruction, which is exactly
-the shape Tollway invoices produce. Testing against real chain data catches parsing mistakes
-that hand-written fixtures hide.
+(slot 500188983): a historical 0.001 USDC transfer carrying a Memo instruction. This checks
+parsing against actual chain data alongside mocked failure cases; it is not a new customer
+payment or evidence of revenue.
 
 Covered: exact 6dp and 9dp price conversion without float drift, replay protection, invoice
 expiry, cross-resource reference reuse, wrong mint, underpayment, failed transactions, the
@@ -278,6 +279,10 @@ The proposed revenue model is a basis-point spread on paid calls. The current ga
 payments to one configured merchant; it does not yet split payments between Tollway and
 external providers. Automated provider revenue sharing is on the roadmap, and no commercial
 Tollway revenue has been verified.
+
+The next validation target is a funded pilot with one agent-data provider. No pilot,
+provider contract or demonstrated willingness to pay is claimed. Provider self-serve and
+usage targets in the deck are proposed milestones, not existing traction.
 
 ## Roadmap
 
