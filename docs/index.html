@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tollway: pay-per-call APIs for AI agents</title>
-<meta name="description" content="Tollway lets AI agents buy APIs per call, settled in USDC on Solana, with no accounts and no API keys.">
+<meta name="description" content="Tollway is an AI-assisted pay-per-call API prototype using Solana Pay, with recorded evidence and no buyer account or Tollway API key.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -14,11 +14,11 @@
     --paper-2:    #ECEEEB;
     --ink:        #111815;
     --ink-70:     #3C4A44;
-    --ink-45:     #6C7A73;
+    --ink-45:     #56675D;
     --rule:       #D2D8D3;
     --sign:       #1C6B48;
     --sign-soft:  #E4EFE8;
-    --fare:       #B86A12;
+    --fare:       #98570F;
     --fare-soft:  #F6E9D8;
     --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --body: "Source Serif 4", Georgia, serif;
@@ -45,7 +45,7 @@
 
   .slide {
     position: relative;
-    width: 1280px;
+    width: min(1280px, 100%);
     height: 720px;
     flex: 0 0 auto;
     background: var(--paper);
@@ -57,11 +57,14 @@
     box-shadow: 0 1px 0 var(--rule), 0 14px 30px -22px rgba(17,24,21,.5);
   }
 
+  .slide > * { min-width: 0; }
+  .cover-slide { padding-bottom: 190px; }
+
   .eyebrow {
     font-family: var(--mono);
     font-size: 15px;
     font-weight: 600;
-    letter-spacing: .14em;
+    letter-spacing: 0;
     text-transform: uppercase;
     color: var(--ink-45);
     display: flex;
@@ -77,7 +80,7 @@
     text-wrap: balance;
     margin: 0;
     line-height: 1.02;
-    letter-spacing: -0.015em;
+    letter-spacing: 0;
   }
 
   h1 { font-size: 96px; font-weight: 800; }
@@ -101,7 +104,8 @@
     padding-top: 16px;
     display: flex;
     justify-content: space-between;
-    letter-spacing: .04em;
+    letter-spacing: 0;
+    gap: 18px;
   }
 
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
@@ -120,7 +124,7 @@
   .stat .k {
     font-family: var(--mono);
     font-size: 14px;
-    letter-spacing: .1em;
+    letter-spacing: 0;
     text-transform: uppercase;
     color: var(--ink-45);
   }
@@ -136,7 +140,7 @@
   th {
     font-family: var(--mono);
     font-size: 13px;
-    letter-spacing: .12em;
+    letter-spacing: 0;
     text-transform: uppercase;
     color: var(--ink-45);
     font-weight: 600;
@@ -169,12 +173,14 @@
   .pill {
     font-family: var(--mono);
     font-size: 14px;
-    letter-spacing: .1em;
+    letter-spacing: 0;
     text-transform: uppercase;
     padding: 7px 13px;
     background: var(--fare-soft);
     color: var(--fare);
     display: inline-block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
   .pill.ok { background: var(--sign-soft); color: var(--sign); }
 
@@ -194,7 +200,7 @@
   .deck-hint {
     font-family: var(--mono);
     font-size: 13px;
-    letter-spacing: .08em;
+    letter-spacing: 0;
     color: var(--ink-45);
     text-align: center;
     padding: 4px 0 8px;
@@ -242,12 +248,14 @@
     justify-content: space-between;
     font-family: var(--mono);
     font-size: 14px;
-    letter-spacing: .1em;
+    letter-spacing: 0;
     text-transform: uppercase;
     color: var(--ink-45);
   }
 
-  .diagram { width: 100%; }
+  .diagram { width: 100%; overflow-x: auto; }
+  .diagram svg { width: 100%; display: block; }
+  .diagram:focus-visible { outline: 2px solid var(--sign); outline-offset: 4px; }
   .diagram text { font-family: var(--mono); }
   .diagram .life {
     stroke: var(--rule);
@@ -258,12 +266,63 @@
   .diagram .head { fill: var(--ink); }
   .diagram .arrow { stroke: var(--ink); stroke-width: 1.5; fill: none; }
   .diagram .arrow-return { stroke: var(--sign); stroke-width: 1.5; fill: none; }
+  .protocol-slide h2 { font-size: 42px; }
+
+  .demo-slide {
+    padding: 40px 60px;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    gap: 18px;
+  }
+  .demo-slide .body-block { gap: 14px; }
+  .demo-slide h2 { font-size: 42px; }
+  .demo-summary { font-size: 22px; line-height: 1.4; max-width: none; }
+  .demo-figure { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  .demo-figure video { width: min(640px, 100%); aspect-ratio: 16 / 9; display: block; background: #000; }
+  .demo-caption { font-size: 18px; line-height: 1.4; max-width: none; overflow-wrap: anywhere; }
+  .demo-caption a { color: var(--sign); text-underline-offset: 3px; }
+  .closing-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+
+  @media screen and (max-width: 1100px) {
+    .slide { height: auto; min-height: 640px; padding: 48px; grid-template-rows: auto auto auto; }
+    .cover-slide { min-height: 740px; padding-bottom: 190px; }
+    .grid-2 { grid-template-columns: 1fr; gap: 28px; }
+    .demo-slide { min-height: 0; }
+  }
+
+  @media screen and (max-width: 700px) {
+    .deck { gap: 16px; padding: 16px 16px 40px; }
+    .slide { min-height: 0; padding: 28px 24px; gap: 24px; }
+    .cover-slide { min-height: 740px; padding-bottom: 190px; }
+    h1 { font-size: 56px; }
+    h2, .demo-slide h2, .protocol-slide h2 { font-size: 32px; line-height: 1.12; }
+    .lede, .demo-summary { font-size: 20px; max-width: none; }
+    .eyebrow { flex-wrap: wrap; font-size: 12px; gap: 10px; }
+    .grid-3 { grid-template-columns: 1fr; gap: 24px; }
+    .body-block { gap: 18px; }
+    li { font-size: 19px; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; }
+    table { table-layout: fixed; font-size: 16px; }
+    th, td { padding: 12px 5px; overflow-wrap: anywhere; }
+    pre { font-size: 14px; padding: 20px 16px; }
+    .foot { font-size: 12px; align-items: start; }
+    .foot span:first-child { min-width: 0; overflow-wrap: anywhere; }
+    .foot span:last-child { flex: 0 0 auto; }
+    .cover-meta { left: 24px; right: 24px; flex-wrap: wrap; gap: 10px; font-size: 11px; }
+    .cover-band { padding: 0 24px; }
+    .demo-caption { font-size: 16px; }
+    .diagram svg { min-width: 1000px; }
+    .pill { font-size: 12px; }
+    .deck-hint { padding: 0 16px 16px; font-size: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
 
   @media print {
     html, body { background: #fff; }
     .deck { gap: 0; padding: 0; }
     .deck-hint { display: none; }
-    .slide { box-shadow: none; page-break-after: always; break-after: page; }
+    .slide { width: 1280px; box-shadow: none; page-break-after: always; break-after: page; }
     @page { size: 1280px 720px; margin: 0; }
   }
 </style>
@@ -271,10 +330,10 @@
 <body>
 <div class="deck" id="deck">
 
-  <section class="slide" style="padding-bottom:190px;">
+  <section class="slide cover-slide">
     <div class="eyebrow"><span>Tollway</span><span>Crypto World's Fair 2026</span></div>
     <div style="align-self:center; display:flex; flex-direction:column; gap:30px;">
-      <h1>Machines can now<br>pay per call.</h1>
+      <h1>Tollway.<br>Pay per call.</h1>
       <p class="lede">A pay-per-call prototype for AI agents, using USDC on Solana. No buyer account or Tollway API key.</p>
     </div>
     <div class="cover-meta">
@@ -304,7 +363,7 @@
     </div>
     <div style="align-self:start;">
       <table>
-        <thead><tr><th>Rail</th><th>Tradeoff to evaluate</th></tr></thead>
+        <thead><tr><th scope="col">Rail</th><th scope="col">Tradeoff to evaluate</th></tr></thead>
         <tbody>
           <tr><td>Cards and billing</td><td>Account setup, fees and billing cadence</td></tr>
           <tr><td>Prepaid credits</td><td>Provider accounts, balances and top-ups</td></tr>
@@ -341,11 +400,11 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     <div class="foot"><span>Tollway</span><span>4 / 13</span></div>
   </section>
 
-  <section class="slide">
+  <section class="slide protocol-slide">
     <div class="eyebrow"><span>Protocol</span><span>05</span></div>
     <div class="body-block">
       <h2>Six messages, one of them on chain.</h2>
-      <div class="diagram">
+      <div class="diagram" tabindex="0" role="region" aria-label="Payment flow diagram">
         <svg viewBox="0 0 1120 396" role="img" aria-label="Settlement sequence between an agent, the Tollway gateway, and Solana">
           <defs>
             <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
@@ -357,7 +416,7 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
           </defs>
 
           <!-- Step numbers sit in a left gutter so they never collide with arrow labels. -->
-          <g font-size="12" fill="#6C7A73" text-anchor="end">
+          <g font-size="12" fill="#56675D" text-anchor="end">
             <text x="26" y="97">1</text>
             <text x="26" y="143">2</text>
             <text x="26" y="197">3</text>
@@ -368,11 +427,11 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
 
           <g transform="translate(44,0)">
             <rect class="head" x="30" y="0" width="180" height="40"></rect>
-            <text x="120" y="25" text-anchor="middle" fill="#F6F7F5" font-size="14" letter-spacing="1">AGENT</text>
+            <text x="120" y="25" text-anchor="middle" fill="#F6F7F5" font-size="14" letter-spacing="0">AGENT</text>
             <rect class="head" x="440" y="0" width="180" height="40"></rect>
-            <text x="530" y="25" text-anchor="middle" fill="#F6F7F5" font-size="14" letter-spacing="1">TOLLWAY</text>
+            <text x="530" y="25" text-anchor="middle" fill="#F6F7F5" font-size="14" letter-spacing="0">TOLLWAY</text>
             <rect class="head" x="850" y="0" width="180" height="40"></rect>
-            <text x="940" y="25" text-anchor="middle" fill="#F6F7F5" font-size="14" letter-spacing="1">SOLANA</text>
+            <text x="940" y="25" text-anchor="middle" fill="#F6F7F5" font-size="14" letter-spacing="0">SOLANA</text>
 
             <line class="life" x1="120" y1="40" x2="120" y2="392"></line>
             <line class="life" x1="530" y1="40" x2="530" y2="392"></line>
@@ -399,17 +458,17 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         </svg>
       </div>
     </div>
-    <div class="foot"><span>The reference is burned after step 6, so it can never be redeemed twice</span><span>5 / 13</span></div>
+    <div class="foot"><span>After step 6, the ledger marks the reference redeemed and rejects reuse</span><span>5 / 13</span></div>
   </section>
 
   <section class="slide">
     <div class="eyebrow"><span>Verification</span><span>06</span></div>
     <div class="body-block">
       <h2>The server checks the chain,<br>not the caller.</h2>
-      <ul>
+      <ul role="list">
         <li><span class="mk">01</span><span><b>Look up by reference.</b> Find every transaction that mentions the invoice key.</span></li>
         <li><span class="mk">02</span><span><b>Measure the merchant delta.</b> Balances after minus balances before, filtered by owner and mint.</span></li>
-        <li><span class="mk">03</span><span><b>Burn the reference.</b> One reference buys exactly one response, so replay is impossible.</span></li>
+        <li><span class="mk">03</span><span><b>Mark it redeemed.</b> The single-process ledger rejects repeated redemption.</span></li>
       </ul>
       <p class="lede" style="font-size:22px; max-width:56ch;">Paying in the wrong mint is rejected, not credited. Underpaying by one base unit is rejected.</p>
     </div>
@@ -419,18 +478,18 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
   <section class="slide">
     <div class="eyebrow"><span>Evidence</span><span>07</span></div>
     <div class="body-block">
-      <h2>It runs against the live cluster today.</h2>
+      <h2>Recorded chain evidence,<br>reproducible checks.</h2>
     </div>
     <div class="grid-3" style="align-self:start;">
       <div class="stat">
         <div class="n accent">1000</div>
         <div class="k">Base units read</div>
-        <div class="d">Merchant balance delta parsed from a real devnet USDC transfer</div>
+        <div class="d">Merchant delta from a historical devnet USDC transfer, not revenue</div>
       </div>
       <div class="stat">
         <div class="n fare">147.9</div>
         <div class="k">TPS observed</div>
-        <div class="d">Live cluster reading returned through the paid handler</div>
+        <div class="d">Recorded devnet reading, not the current cluster TPS</div>
       </div>
       <div class="stat">
         <div class="n">61</div>
@@ -444,19 +503,19 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     </div>
   </section>
 
-  <section class="slide">
+  <section class="slide demo-slide">
     <div class="eyebrow"><span>Live demo</span><span>07b</span></div>
     <div class="body-block">
-      <h2>Solami multi-region RPC,<br>recorded against mainnet.</h2>
-      <p class="lede" style="font-size:22px; max-width:58ch;">Six real stages, no fixtures: per-region latency and slot, cross-region slot delta, a USDC mint read through the fastest healthy region, a cross-check against the public mainnet endpoint, and a second pass 20 seconds later where the slot has moved on.</p>
+      <h2>Solami: recorded on mainnet.</h2>
+      <p class="lede demo-summary">Three live regions, slot comparison and a USDC-mint read. The recorded second pass shows the chain head advancing.</p>
     </div>
-    <div style="align-self:start; width:100%;">
-      <video controls preload="metadata" playsinline style="width:100%; max-width:1040px; display:block; border-radius:8px; border:1px solid rgba(255,255,255,.16); background:#000;">
+    <div class="demo-figure">
+      <video controls preload="metadata" playsinline>
         <source src="assets/tollway-solami-live-demo.mp4" type="video/mp4">
         Your browser cannot play this video. Direct link:
         <a href="assets/tollway-solami-live-demo.mp4">tollway-solami-live-demo.mp4</a>
       </video>
-      <p class="lede" style="font-size:18px; margin-top:14px;">131 seconds, 1080p. Reproduce it with <code>pnpm tsx scripts/solami-live-demo.ts</code>.</p>
+      <p class="lede demo-caption"><a href="assets/tollway-solami-live-demo.mp4">Open the 131-second 1080p recording</a>. Reproduce: <code>pnpm tsx scripts/solami-live-demo.ts</code>.</p>
     </div>
     <div class="foot"><span>Tollway</span><span>7b / 13</span></div>
   </section>
@@ -464,11 +523,11 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
   <section class="slide">
     <div class="eyebrow"><span>Product</span><span>08</span></div>
     <div class="body-block">
-      <h2>Any feed becomes a paid tool<br>an agent can call.</h2>
+      <h2>Three core feeds,<br>one payment handshake.</h2>
     </div>
     <div style="align-self:start;">
       <table>
-        <thead><tr><th>Resource</th><th>Price</th><th>Returns</th></tr></thead>
+        <thead><tr><th scope="col">Resource</th><th scope="col">Price</th><th scope="col">Returns</th></tr></thead>
         <tbody>
           <tr><td>solana-validator-health</td><td class="price">0.01 USDC</td><td>Slot, epoch progress, observed TPS, health flag</td></tr>
           <tr><td>token-risk-scan</td><td class="price">0.05 USDC</td><td>Mint and freeze authority, supply, risk flags</td></tr>
@@ -476,14 +535,14 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
         </tbody>
       </table>
     </div>
-    <div class="foot"><span>Exposed over MCP so any agent framework can call it</span><span>8 / 13</span></div>
+    <div class="foot"><span>Core catalogue excerpt; 18 implemented resources across four providers</span><span>8 / 13</span></div>
   </section>
 
   <section class="slide">
     <div class="eyebrow"><span>Go to market</span><span>09</span></div>
     <div class="body-block">
       <h2>Sell where the agents already are.</h2>
-      <ul>
+      <ul role="list">
         <li><span class="mk">01</span><span><b>Agree one funded pilot.</b> Test the paid-tool workflow with an agent-data provider.</span></li>
         <li><span class="mk">02</span><span><b>Measure repeat paid use.</b> Check acceptance, RPC failures and costs before expanding.</span></li>
         <li><span class="mk">03</span><span><b>Build provider self-serve.</b> A roadmap milestone, guided by validated pilot needs.</span></li>
@@ -506,10 +565,10 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     <div class="grid-2">
       <div class="body-block">
         <h2>Test the payment path,<br>not just the happy path.</h2>
-        <p class="lede" style="font-size:23px;">An agent-facing gateway must reject replay, expired invoices and wrong-token payments. These paths are tested, not assumed.</p>
+        <p class="lede">An agent-facing gateway must reject replay, expired invoices and wrong-token payments. These paths are tested, not assumed.</p>
       </div>
       <div class="body-block">
-        <ul>
+        <ul role="list">
           <li><span class="mk">01</span><span><b>Darshan Ahirrao</b>, India-based solo founder</span></li>
           <li><span class="mk">02</span><span><b>61 tests across six suites:</b> verification, handshake, failover and providers</span></li>
           <li><span class="mk">03</span><span><b>AI-assisted implementation:</b> reviewable source and real-chain evidence, not a security audit</span></li>
@@ -524,10 +583,10 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     <div class="grid-2">
       <div class="body-block">
         <h2>Make paid tools<br>verifiable.</h2>
-        <p class="lede" style="font-size:23px;">HTTP and MCP expose the same priced resources. Reference-based verification ties a paid call to chain evidence.</p>
+        <p class="lede">HTTP and MCP expose the same priced resources. Reference-based verification ties a paid call to chain evidence.</p>
       </div>
       <div class="body-block">
-        <ul>
+        <ul role="list">
           <li><span class="mk">01</span><span><b>Solana Pay references</b> connect invoices to verifiable transfers</span></li>
           <li><span class="mk">02</span><span><b>MCP tools</b> expose the request and redemption handshake</span></li>
           <li><span class="mk">03</span><span><b>Settlement timing varies</b> with confirmation and RPC indexing</span></li>
@@ -542,7 +601,7 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     <div class="body-block" style="align-self:center;">
       <h2>The toll road for the<br>agent economy.</h2>
       <p class="lede">Runnable code, recorded chain evidence and an explicit path from prototype to a funded pilot.</p>
-      <div style="display:flex; gap:12px; margin-top:8px;">
+      <div class="closing-links">
         <span class="pill ok">github.com/darshanahirrao/tollway</span>
         <span class="pill">darshanahirrao</span>
       </div>
@@ -562,7 +621,8 @@ GET /v1/data/token-risk-scan  <span class="c">X-Payment-Reference: 7xKq...</span
     else if (event.key === "ArrowLeft" || event.key === "ArrowUp") index = Math.max(index - 1, 0);
     else return;
     event.preventDefault();
-    slides[index].scrollIntoView({ behavior: "smooth", block: "center" });
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    slides[index].scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth", block: "center" });
   });
 </script>
 </body>
